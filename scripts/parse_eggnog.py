@@ -3,50 +3,62 @@
 import pandas as pd
 
 
-class EggNOGAnnotaionParser: 
+class EggNOGAnnotationParser: 
     """Class for parsing raw EggNOG annotations from a TSV file."""
 
     def __init__(self, filepath):
         self.filepath = filepath
         self.df = None
 
-def load_eggnog_annotations(filepath):
-    """Load EggNOG annotations from a TSV file."""
-    df = pd.read_csv(filepath, sep='\t', comment='#', header=None)
-    print(f"Loaded {len(df)} EggNOG annotations from {filepath}")
-    return df
+    def load_annotations(self):
+        """Load EggNOG annotations from a TSV file."""
 
-def parse_eggnog_annotations(df):
-    df_clean = df[[0, 1, 2, 3, 4, 6, 10, 11, 12, 16]].copy()
-    df_clean.columns = [
-    "query_id", "seed_ortholog", "evalue", "score",
-    "eggnog_OGs", "description", "go_terms",
-    "kegg_pathways", "pfam_domains", "cog_category"
-    ]
-    return df_clean
+        self.df = pd.read_csv(self.filepath, sep='\t', skiprows=4)
+        print(f"Loaded {len(self.df)} EggNOG annotations from {self.filepath}")
+        print(self.df)
 
-def convert_to_NF1(df):
+    def parse_annotations(self):
+        print(self.df.columns)
+        #print(self.df[["GOs"]])
 
-    muliti_valued_cols = ["go_terms", "kegg_pathways",
-                          "pfam_domains", "cog_category"]
-    return df.columns
+        columns_to_explode = ["eggNOG_OGs",
+                              "GOs",
+                              "COG_category",
+                              "KEGG_ko",
+                              "KEGG_Pathway",
+                              "BRITE",
+                              "PFAMs"]
 
+        df_long = self.df
+
+        for column in df_long.columns:
+            df_long[column] = df_long[column].replace("-", pd.NA)
+            if column in columns_to_explode:
+                df_long[column] = df_long[column].str.split(",")
+                df_long = df_long.explode(column)
+
+        self.df = df_long
+
+        print(df_long)
+
+    def save_annotations(self):
+        """Save the parsed annotations to a new TSV file."""
+        output_filepath = self.filepath.replace(".tsv", "_parsed.tsv")
+        self.df.to_csv(output_filepath, sep='\t', index=False)
+        print(f"Parsed annotations saved to {output_filepath}")
+
+    def run(self):
+        self.load_annotations()
+        self.parse_annotations()
+        self.save_annotations()
 
 
 def main():
     filepath = "data/test/dummy_eggnog_annotations.tsv"
-    df = load_eggnog_annotations(filepath)
-    df_parsed = parse_eggnog_annotations(df)
 
-    df_parsed.to_csv("data/test/parsed_eggnog_annotations.tsv",
-                     sep='\t',
-                     index=False)
+    parser = EggNOGAnnotationParser(filepath)
 
-    print(convert_to_NF1(df_parsed))
-
-
-
-
+    parser.run()
 
 if __name__ == "__main__":
     main()
