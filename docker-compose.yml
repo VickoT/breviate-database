@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres:16  # The official PostgreSQL image
+    container_name: eggnog_pg 
+    restart: always # Restart policy - always restart the container if it stops
+    environment:
+      POSTGRES_USER: eggnog
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: eggnogdb
+    ports:
+      - "5432:5432" # Expose host port 5432 to container port 5432 (default PostgreSQL port)
+    volumes:
+      - pgdata:/var/lib/postgresql/data # location for persistent data storage
+      - ./database:/docker-entrypoint-initdb.d # mounts dir containing SQL scripts to initialize the database
+
+volumes:
+  pgdata: 
