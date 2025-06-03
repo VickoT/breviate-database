@@ -20,5 +20,6 @@ CREATE TABLE eggnog_annotations (
     kegg_tc TEXT,
     cazy TEXT,
     bigg_reaction TEXT,
-    pfams TEXT
+    pfams TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

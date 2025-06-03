@@ -11,7 +11,8 @@ services:
       - "5432:5432" # Expose host port 5432 to container port 5432 (default PostgreSQL port)
     volumes:
       - pgdata:/var/lib/postgresql/data # location for persistent data storage
-      - ./database:/docker-entrypoint-initdb.d # mounts dir containing SQL scripts to initialize the database
+      #- ./database:/docker-entrypoint-initdb.d # mounts dir containing SQL scripts to initialize the database
+      - ./initdb:/docker-entrypoint-initdb.d
 
 volumes:
   pgdata: 
