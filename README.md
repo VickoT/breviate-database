@@ -1,3 +1,6 @@
+![CI](https://github.com/VickoT/breviate-database/actions/workflows/ci.yml/badge.svg?branch=try-ci)
+
+
 # breviate-database
 A Dockerized PostgreSQL database for storing functional annotations of breviate proteomes.
 
