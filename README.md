@@ -28,3 +28,83 @@ KEGG_TC         |  KEGG Transported Classification.
 CAZy            |  Carbohydrate-Active Enzymes family, if any.
 BiGG_Reaction   |  Metabolic reaction in the BiGG database.
 PFAMs           |  PFAM protein domain identified. 
+
+
+## Database structure (ER-diagram)
+
+```mermaid
+erDiagram
+    EggnogQuery {
+        int id PK
+        text query_id
+        text seed_ortholog
+        float evalue
+        float score
+        text max_annot_lvl
+        text description
+        text preferred_name
+        timestamp created_at
+    }
+
+    Eggnog_OG {
+        id int PK
+        query_id text FK
+        og_name text
+    }    
+
+    GO_Term {
+        int id PK
+        int query_id FK
+        text go_term
+    }
+
+    EC_Number {
+        int id PK
+        int query_id FK
+        text ec_number
+    }
+
+    KEGG_Annotation {
+        int id PK
+        int query_id FK
+        text kegg_ko
+        text kegg_pathway
+        text kegg_module
+        text kegg_reaction
+        text kegg_rclass
+        text brite
+        text kegg_tc
+    }
+
+    PfamDomain {
+        int id PK
+        int query_id FK
+        text pfam_domain
+    }
+
+    COG_Category {
+        int id PK
+        int query_id FK
+        text category
+    }
+
+    CAZyFamily {
+        int id PK
+        int query_id FK
+        text family
+    }
+
+    BiGGReaction {
+        int id PK
+        int query_id FK
+        text reaction
+    }
+
+    EggnogQuery ||--o{ Eggnog_OG : contains
+    EggnogQuery ||--o{ GO_Term : contains
+    EggnogQuery ||--o{ EC_Number : contains
+    EggnogQuery ||--o{ KEGG_Annotation : contains
+    EggnogQuery ||--o{ PfamDomain : contains
+    EggnogQuery ||--o{ COG_Category : contains
+    EggnogQuery ||--o{ CAZyFamily : contains
+    EggnogQuery ||--o{ BiGGReaction : contains
