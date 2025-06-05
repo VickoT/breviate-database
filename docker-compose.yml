@@ -1,18 +1,34 @@
 services:
   db:
-    image: postgres:16  # The official PostgreSQL image
-    container_name: eggnog_pg 
-    restart: always # Restart policy - always restart the container if it stops
+    image: postgres:16
+    container_name: eggnog_pg
+    restart: always
     environment:
       POSTGRES_USER: eggnog
       POSTGRES_PASSWORD: password
       POSTGRES_DB: eggnogdb
     ports:
-      - "5432:5432" # Expose host port 5432 to container port 5432 (default PostgreSQL port)
+      - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data # location for persistent data storage
-      #- ./database:/docker-entrypoint-initdb.d # mounts dir containing SQL scripts to initialize the database
+      - pgdata:/var/lib/postgresql/data
       - ./initdb:/docker-entrypoint-initdb.d
 
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.streamlit
+    container_name: streamlit_app
+    ports:
+      - "8501:8501"
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+    environment:
+      - DB_HOST=db
+      - DB_NAME=eggnogdb
+      - DB_USER=eggnog
+      - DB_PASSWORD=password
+
 volumes:
-  pgdata: 
+  pgdata:
