@@ -23,3 +23,12 @@ if st.button("Run Query"):
         st.dataframe(df, use_container_width=True, height=800)
     except Exception as e:
         st.error(f"Error: {e}")
+
+
+with st.expander("💡 Example queries"):
+    st.markdown("""
+    - `SELECT * FROM eggnog_query LIMIT 5`
+    - `SELECT query_id, description FROM eggnog_query WHERE evalue < 1e-10`
+    - `SELECT COUNT(*) FROM eggnog_query`
+    - `SELECT * FROM eggnog_query ORDER BY score DESC LIMIT 10`
+    """)

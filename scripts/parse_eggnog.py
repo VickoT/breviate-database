@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 import pandas as pd
+from models import EggnogQuery, Base
 from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
 
 
 class EggNOGAnnotationParser: 
@@ -74,10 +77,34 @@ class EggNOGAnnotationParser:
         self.df.to_csv(output_filepath, sep='\t', index=False)
         print(f"Parsed annotations saved to {output_filepath}")
 
-    def export_to_postgres(self, table_name="eggnog_annotations"):
+#    def export_to_postgres(self, table_name="eggnog_annotations"):
+#        engine = create_engine('postgresql://eggnog:password@localhost:5432/eggnogdb')
+#        self.df.to_sql(table_name, engine, if_exists='append', index=False)
+#        print(f"Annotations exported to PostgreSQL table '{table_name}'")
+
+    def export_to_postgres(self):
         engine = create_engine('postgresql://eggnog:password@localhost:5432/eggnogdb')
-        self.df.to_sql(table_name, engine, if_exists='append', index=False)
-        print(f"Annotations exported to PostgreSQL table '{table_name}'")
+        Session = sessionmaker(bind=engine)
+        session = Session()
+
+        unique_df = self.df.drop_duplicates(subset='query_id')
+
+        for _, row in unique_df.iterrows():
+            entry = EggnogQuery(
+                query_id=row['query_id'],
+                seed_ortholog=row.get('seed_ortholog') if pd.notna(row.get('seed_ortholog')) else None,
+                evalue=row.get('evalue') if pd.notna(row.get('evalue')) else None,
+                score=row.get('score') if pd.notna(row.get('score')) else None,
+                max_annot_lvl=row.get('max_annot_lvl') if pd.notna(row.get('max_annot_lvl')) else None,
+                description=row.get('description') if pd.notna(row.get('description')) else None,
+                preferred_name=row.get('preferred_name') if pd.notna(row.get('preferred_name')) else None,
+            )
+            session.add(entry)
+
+        session.commit()
+        session.close()
+        print("Annotations exported to PostgreSQL database")
+
 
     def run(self):
         self.load_annotations()
