@@ -22,6 +22,19 @@ class EggnogQuery(Base):
 
     cog_categories = relationship("COGCategory", back_populates="query",
                                   cascade="all, delete-orphan")
+    kegg_orthologs = relationship("KEGGOrtholog", back_populates="query",
+                                  cascade="all, delete-orphan")
+
+class KEGGOrtholog(Base):
+    __tablename__ = 'kegg_ortholog'
+
+    id = Column(Integer, primary_key=True)
+    query_id = Column(String, ForeignKey('eggnog_query.query_id'),
+                      nullable=False)
+    kegg_ko = Column(String, nullable=False)
+
+    query = relationship("EggnogQuery", back_populates="kegg_orthologs")
+
 
 class COGCategory(Base):
     __tablename__ = 'cog_category'
@@ -29,7 +42,6 @@ class COGCategory(Base):
     id = Column(Integer, primary_key=True)
     query_id = Column(String, ForeignKey('eggnog_query.query_id'), nullable=False)
     category = Column(String, ForeignKey('cog_category_description.category'), nullable=False)
-
     query = relationship("EggnogQuery", back_populates="cog_categories")
     description_entry = relationship("COGCategoryDescription",
                                      back_populates="cog_entries",
