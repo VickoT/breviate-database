@@ -5,7 +5,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 
-
 class EggNOGAnnotationParser: 
     """
     Class for parsing raw EggNOG annotations from a TSV file.
@@ -71,17 +70,6 @@ class EggNOGAnnotationParser:
         print(f"Parsed annotations into long format with {len(self.df)} rows")
         print(df_long)
 
-    def save_annotations(self):
-        """Save the parsed annotations to a new TSV file."""
-        output_filepath = self.filepath.replace(".tsv", "_parsed.tsv")
-        self.df.to_csv(output_filepath, sep='\t', index=False)
-        print(f"Parsed annotations saved to {output_filepath}")
-
-#    def export_to_postgres(self, table_name="eggnog_annotations"):
-#        engine = create_engine('postgresql://eggnog:password@localhost:5432/eggnogdb')
-#        self.df.to_sql(table_name, engine, if_exists='append', index=False)
-#        print(f"Annotations exported to PostgreSQL table '{table_name}'")
-
     def export_to_postgres(self):
         engine = create_engine('postgresql://eggnog:password@localhost:5432/eggnogdb')
         Session = sessionmaker(bind=engine)
@@ -108,15 +96,18 @@ class EggNOGAnnotationParser:
 
     def run(self):
         self.load_annotations()
-        self.parse_annotations()
-        self.save_annotations()
+        #self.parse_annotations()
         self.export_to_postgres()
 
 
 def main():
-    filepath = "data/test/dummy_eggnog_annotations.tsv"
+    filepath = "data/eggnog.emapper.annotations"
+    #filepath = "data/test/dummy_eggnog_annotations.tsv"
     parser = EggNOGAnnotationParser(filepath)
     parser.run()
 
 if __name__ == "__main__":
     main()
+
+
+

@@ -23,6 +23,7 @@ class EggnogQuery(Base):
 
 
 def init_db():
+    # Add echo=True?
     engine = create_engine('postgresql://eggnog:password@localhost:5432/eggnogdb')
     Base.metadata.create_all(engine)
     print("Database initialized successfully.")
