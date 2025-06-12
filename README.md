@@ -6,6 +6,62 @@ A Dockerized PostgreSQL database for storing functional annotations of breviate 
 
 
 
+## Database setup pipeline
+
+1. The containers and accessing them
+
+1. The raw data is stored in `data/test/...`
+2. By running `python scripts/models.py`, the database is initialized using an Object-Relational Mapper (ORM). With ORM, each table is represented by a Python class. After all tables have been defined as classes the function bellow is executed. This function:    
+    * Connecects to the PostgreSQL database running inside the Docker container (via localhost:5432).
+    * Generates all tables defined by the ORM model (if they don't already exists).
+
+    ```
+    def init_db():
+        engine = create_engine('postgresql://eggnog:password@localhost:5432/eggnogdb')
+        Base.metadata.create_all(engine)
+        print("Database initialized successfully.")
+    ```
+
+3. With the database schema in place inside the container, populate the tables by running `scripts/parse_eggnog.py`. This script:
+    * Loads the raw eggnog data.
+    * Parse the data and makes each cell contain one value per cell
+    * Exports the data to the database. This is done using this function:
+
+   ```
+       def export_to_postgres(self):
+        engine = create_engine('postgresql://eggnog:password@localhost:5432/eggnogdb')
+        Session = sessionmaker(bind=engine)
+        session = Session()
+
+        unique_df = self.df.drop_duplicates(subset='query_id')
+
+        for _, row in unique_df.iterrows():
+            entry = EggnogQuery(
+                query_id=row['query_id'],
+                seed_ortholog=row.get('seed_ortholog') if pd.notna(row.get('seed_ortholog')) else None,
+                evalue=row.get('evalue') if pd.notna(row.get('evalue')) else None,
+                score=row.get('score') if pd.notna(row.get('score')) else None,
+                max_annot_lvl=row.get('max_annot_lvl') if pd.notna(row.get('max_annot_lvl')) else None,
+                description=row.get('description') if pd.notna(row.get('description')) else None,
+                preferred_name=row.get('preferred_name') if pd.notna(row.get('preferred_name')) else None,
+            )
+            session.add(entry)
+
+        session.commit()
+        session.close()
+        print("Annotations exported to PostgreSQL database")
+
+   ```
+   This function:
+   
+   * Creates a SQLAlchemy engine to connect to the PostgreSQL database.
+   * Sets up a session factory (sessionmaker) bound to the engine and opens a session — this is used to interact with the database.
+   * Loops over each row in the DataFrame, constructs an EggnogQuery object from it, and adds it to the session.
+   * Commits all pending entries and closes the section.
+        
+
+
+
 **EggNOG columns**
 
 
