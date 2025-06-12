@@ -24,6 +24,8 @@ class EggnogQuery(Base):
                                   cascade="all, delete-orphan")
     kegg_orthologs = relationship("KEGGOrtholog", back_populates="query",
                                   cascade="all, delete-orphan")
+    kegg_pathways = relationship("KEGGPathway", back_populates="query", 
+                                  cascade="all, delete-orphan")
 
 class KEGGOrtholog(Base):
     __tablename__ = 'kegg_ortholog'
@@ -34,6 +36,16 @@ class KEGGOrtholog(Base):
     kegg_ko = Column(String, nullable=False)
 
     query = relationship("EggnogQuery", back_populates="kegg_orthologs")
+
+class KEGGPathway(Base):
+    __tablename__ = 'kegg_pathway'
+
+    id = Column(Integer, primary_key=True)
+    query_id = Column(String, ForeignKey('eggnog_query.query_id'),
+                      nullable=False)
+    kegg_pathway = Column(String, nullable=False)
+
+    query = relationship("EggnogQuery", back_populates="kegg_pathways")
 
 
 class COGCategory(Base):

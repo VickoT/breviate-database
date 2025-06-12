@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import pandas as pd
-from models import EggnogQuery, COGCategory, COGCategoryDescription, KEGGOrtholog, Base
+from models import EggnogQuery, COGCategory, COGCategoryDescription, KEGGOrtholog, KEGGPathway, Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -31,10 +31,12 @@ class EggNOGAnnotationParser:
         Session = sessionmaker(bind=engine)
         session = Session()
 
-        session.query(EggnogQuery).delete()
-        session.query(KEGGOrtholog).delete()
+        # Add an 'if reset:'
         session.query(COGCategory).delete()
         session.query(COGCategoryDescription).delete()
+        session.query(KEGGOrtholog).delete()
+        session.query(KEGGPathway).delete()
+        session.query(EggnogQuery).delete()
         session.commit()
 
         cog_rows = []
@@ -61,6 +63,13 @@ class EggNOGAnnotationParser:
                         kegg_entry = KEGGOrtholog(query_id=row['query_id'], kegg_ko=ko)
                         session.add(kegg_entry)
 
+            # KEGG Pathways
+            if pd.notna(row.get('kegg_pathway')):
+                for pathway in row['kegg_pathway'].split(','):
+                    pathway = pathway.strip()
+                    if pathway and pathway != "-":
+                        kegg_pathway_entry = KEGGPathway(query_id=row['query_id'], kegg_pathway=pathway)
+                        session.add(kegg_pathway_entry)
 
             # Create COGCategory objects for each category in the row
             if pd.notna(row.get('cog_category')):
