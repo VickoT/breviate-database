@@ -112,6 +112,12 @@ erDiagram
         text kegg_ko
     }
 
+    KEGG_Pathway {
+        int id PK
+        int query_id FK
+        text kegg_pathway
+    }
+
     COG_Category {
         int id PK
         int query_id FK
@@ -125,6 +131,7 @@ erDiagram
 
 
     EggnogQuery ||--o{ KEGG_ko : contains
+    EggnogQuery ||--o{ KEGG_Pathway : contains
     EggnogQuery ||--o{ COG_Category : contains
     COG_Category ||--o{ COG_Category_Description : contains
     
