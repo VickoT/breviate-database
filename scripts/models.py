@@ -19,7 +19,19 @@ class EggnogQuery(Base):
     preferred_name = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
 
+    cog_categories = relationship("COGCategory", back_populates="query",
+                                  cascade="all, delete-orphan")
 
+class COGCategory(Base):
+    __tablename__ = 'cog_category'
+    
+    id = Column(Integer, primary_key=True)
+    query_id = Column(String,
+                      ForeignKey('eggnog_query.query_id'),
+                      nullable=False)
+    category = Column(String, nullable=False)
+
+    query = relationship("EggnogQuery", back_populates="cog_categories")
 
 
 def init_db():
