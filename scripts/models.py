@@ -8,7 +8,8 @@ Base = declarative_base()
 
 class EggnogQuery(Base):
     __tablename__ = 'eggnog_query'
-    
+
+    # I should remove id, query_id is unique
     id = Column(Integer, primary_key=True)
     query_id = Column(String, nullable=False, unique=True)
     seed_ortholog = Column(String)
@@ -26,12 +27,22 @@ class COGCategory(Base):
     __tablename__ = 'cog_category'
     
     id = Column(Integer, primary_key=True)
-    query_id = Column(String,
-                      ForeignKey('eggnog_query.query_id'),
-                      nullable=False)
-    category = Column(String, nullable=False)
+    query_id = Column(String, ForeignKey('eggnog_query.query_id'), nullable=False)
+    category = Column(String, ForeignKey('cog_category_description.category'), nullable=False)
 
     query = relationship("EggnogQuery", back_populates="cog_categories")
+    description_entry = relationship("COGCategoryDescription",
+                                     back_populates="cog_entries",
+                                     foreign_keys=[category])
+
+
+class COGCategoryDescription(Base):
+    __tablename__ = 'cog_category_description'
+    
+    category = Column(String, primary_key=True)
+    description = Column(Text, nullable=False)
+
+    cog_entries = relationship("COGCategory", back_populates="description_entry")
 
 
 def init_db():

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import pandas as pd
-from models import EggnogQuery, COGCategory, Base
+from models import EggnogQuery, COGCategory, COGCategoryDescription, Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -61,10 +61,58 @@ class EggNOGAnnotationParser:
         session.close()
         print("Annotations exported to PostgreSQL database")
 
+    def create_cog_description_table(self):
+        """Populate the cog_category_description table with all standard COG categories."""
+        engine = create_engine('postgresql://eggnog:password@localhost:5432/eggnogdb')
+        Session = sessionmaker(bind=engine)
+        session = Session()
+
+        cog_category_descriptions = {
+            'A': 'RNA processing and modification',
+            'B': 'Chromatin structure and dynamics',
+            'C': 'Energy production and conversion',
+            'D': 'Cell cycle control, cell division, chromosome partitioning',
+            'E': 'Amino acid transport and metabolism',
+            'F': 'Nucleotide transport and metabolism',
+            'G': 'Carbohydrate transport and metabolism',
+            'H': 'Coenzyme transport and metabolism',
+            'I': 'Lipid transport and metabolism',
+            'J': 'Translation, ribosomal structure and biogenesis',
+            'K': 'Transcription',
+            'L': 'Replication, recombination and repair',
+            'M': 'Cell wall/membrane/envelope biogenesis',
+            'N': 'Cell motility',
+            'O': 'Post-translational modification, protein turnover, chaperones',
+            'P': 'Inorganic ion transport and metabolism',
+            'Q': 'Secondary metabolites biosynthesis, transport and catabolism',
+            'R': 'General function prediction only',
+            'S': 'Function unknown',
+            'T': 'Signal transduction mechanisms',
+            'U': 'Intracellular trafficking, secretion, and vesicular transport',
+            'V': 'Defense mechanisms',
+            'W': 'Extracellular structures',
+            'Y': 'Nuclear structure',
+            'Z': 'Cytoskeleton',
+        }
+
+        objects = [
+            COGCategoryDescription(category=cat, description=desc)
+            for cat, desc in cog_category_descriptions.items()
+        ]
+
+        for obj in objects:
+            session.merge(obj)  # insert or update if exists
+        session.commit()
+        session.close()
+        print("COG category description table populated.")
+
+
+
 
     def run(self):
         self.load_annotations()
         self.export_to_postgres()
+        self.create_cog_description_table()
 
 
 def main():
@@ -74,6 +122,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
