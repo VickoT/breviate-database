@@ -7,7 +7,7 @@ from scripts.models import (
         KEGGOrtholog, KEGGPathway
         )
 
-class EggNOGAnnotationParser: 
+class EggNOGAnnotationParser:
 
     def __init__(self, filepath):
         self.filepath = filepath

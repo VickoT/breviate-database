@@ -48,7 +48,7 @@ class KEGGPathway(Base):
 
 class COGCategory(Base):
     __tablename__ = 'cog_category'
-    
+
     id = Column(Integer, primary_key=True)
     query_id = Column(String, ForeignKey('eggnog_query.query_id'), nullable=False)
     category = Column(String, ForeignKey('cog_category_description.category'), nullable=False)
@@ -60,7 +60,7 @@ class COGCategory(Base):
 
 class COGCategoryDescription(Base):
     __tablename__ = 'cog_category_description'
-    
+
     category = Column(String, primary_key=True)
     description = Column(Text, nullable=False)
 
