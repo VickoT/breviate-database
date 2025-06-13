@@ -49,7 +49,7 @@ A Dockerized PostgreSQL database for storing functional annotations of breviate 
         session.close()
         print("Annotations exported to PostgreSQL database")
    ```
-   
+
    This function:
    * Creates a SQLAlchemy engine to connect to the PostgreSQL database.
    * Sets up a session factory (sessionmaker) bound to the engine and opens a session — this is used to interact with the database.
