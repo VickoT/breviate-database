@@ -51,13 +51,12 @@ A Dockerized PostgreSQL database for storing functional annotations of breviate 
    ```
    
    This function:
-     
    * Creates a SQLAlchemy engine to connect to the PostgreSQL database.
    * Sets up a session factory (sessionmaker) bound to the engine and opens a session — this is used to interact with the database.
    * Loops over each row in the DataFrame, constructs an EggnogQuery object from it, and adds it to the session.
    * Commits all pending entries and closes the section.
 
-**EggNOG columns**
+## EggNOG columns
 
 Data            | Description
 ----------------|-------------
@@ -80,7 +79,7 @@ BRITE           |  BRITE functional hierarchy classification.
 KEGG_TC         |  KEGG Transported Classification.
 CAZy            |  Carbohydrate-Active Enzymes family, if any.
 BiGG_Reaction   |  Metabolic reaction in the BiGG database.
-PFAMs           |  PFAM protein domain identified. 
+PFAMs           |  PFAM protein domain identified.
 
 ## Database structure (ER-diagram)
 
