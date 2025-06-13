@@ -1,33 +1,31 @@
-![CI](https://github.com/VickoT/breviate-database/actions/workflows/ci.yml/badge.svg?branch=main)
-
-
 # breviate-database
+
+![CI](https://github.com/VickoT/breviate-database/actions/workflows/ci.yml/badge.svg?branch=main)
+![Markdown Lint](https://github.com/VickoT/breviate-database/actions/workflows/markdownlint.yml/badge.svg?branch=main)
+
 A Dockerized PostgreSQL database for storing functional annotations of breviate proteomes.
-
-
 
 ## Database setup pipeline
 
 1. The containers and accessing them
-
-1. The raw data is stored in `data/test/...`
-2. By running `python scripts/models.py`, the database is initialized using an Object-Relational Mapper (ORM). With ORM, each table is represented by a Python class. After all tables have been defined as classes the function bellow is executed. This function:    
+2. The raw data is stored in `data/test/...`
+3. By running `python scripts/models.py`, the database is initialized using an Object-Relational Mapper (ORM). With ORM, each table is represented by a Python class. After all tables have been defined as classes the function bellow is executed. This function:
     * Connecects to the PostgreSQL database running inside the Docker container (via localhost:5432).
     * Generates all tables defined by the ORM model (if they don't already exists).
 
-    ```
+    ```python
     def init_db():
         engine = create_engine('postgresql://eggnog:password@localhost:5432/eggnogdb')
         Base.metadata.create_all(engine)
         print("Database initialized successfully.")
     ```
 
-3. With the database schema in place inside the container, populate the tables by running `scripts/parse_eggnog.py`. This script:
+4. With the database schema in place inside the container, populate the tables by running `scripts/parse_eggnog.py`. This script:
     * Loads the raw eggnog data.
     * Parse the data and makes each cell contain one value per cell
     * Exports the data to the database. This is done using this function:
 
-   ```
+   ```python
        def export_to_postgres(self):
         engine = create_engine('postgresql://eggnog:password@localhost:5432/eggnogdb')
         Session = sessionmaker(bind=engine)
@@ -50,20 +48,16 @@ A Dockerized PostgreSQL database for storing functional annotations of breviate 
         session.commit()
         session.close()
         print("Annotations exported to PostgreSQL database")
-
    ```
-   This function:
    
+   This function:
+     
    * Creates a SQLAlchemy engine to connect to the PostgreSQL database.
    * Sets up a session factory (sessionmaker) bound to the engine and opens a session — this is used to interact with the database.
    * Loops over each row in the DataFrame, constructs an EggnogQuery object from it, and adds it to the session.
    * Commits all pending entries and closes the section.
-        
-
-
 
 **EggNOG columns**
-
 
 Data            | Description
 ----------------|-------------
@@ -88,7 +82,6 @@ CAZy            |  Carbohydrate-Active Enzymes family, if any.
 BiGG_Reaction   |  Metabolic reaction in the BiGG database.
 PFAMs           |  PFAM protein domain identified. 
 
-
 ## Database structure (ER-diagram)
 
 ```mermaid
@@ -104,7 +97,6 @@ erDiagram
         text preferred_name
         timestamp created_at
     }
-
 
     KEGG_ko {
         int id PK
@@ -129,10 +121,7 @@ erDiagram
          text description 
    }
 
-
     EggnogQuery ||--o{ KEGG_ko : contains
     EggnogQuery ||--o{ KEGG_Pathway : contains
     EggnogQuery ||--o{ COG_Category : contains
     COG_Category ||--o{ COG_Category_Description : contains
-    
-
