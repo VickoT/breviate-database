@@ -68,6 +68,9 @@ class COGCategoryDescription(Base):
 
     cog_entries = relationship("COGCategory", back_populates="description_entry")
 
+class PFAMs(Base):
+    pass
+
 
 def init_db():
     # Add echo=True?
