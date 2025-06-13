@@ -1,4 +1,4 @@
-![CI](https://github.com/VickoT/breviate-database/actions/workflows/ci.yml/badge.svg?branch=try-ci)
+![CI](https://github.com/VickoT/breviate-database/actions/workflows/ci.yml/badge.svg?branch=main)
 
 
 # breviate-database
