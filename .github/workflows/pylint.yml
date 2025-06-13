@@ -28,4 +28,4 @@ jobs:
 
       - name: Run Pylint
         run: |
-          pylint scripts
+          pylint scripts --rcfile=.github/.pylintrc scripts
