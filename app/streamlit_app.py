@@ -26,6 +26,25 @@ if st.button("Run Query"):
         st.error(f"Error: {e}")
 
 
+search_term = st.text_input("🔍 Search annotations (any field):")
+
+if search_term:
+    like_pattern = f"%{search_term}%"
+    try:
+        query = text("""
+            SELECT * FROM eggnog_query
+            WHERE query_id ILIKE :term
+               OR seed_ortholog ILIKE :term
+               OR description ILIKE :term
+               OR preferred_name ILIKE :term
+        """)
+        with engine.connect() as conn:
+            df = pd.read_sql_query(query, conn, params={"term": like_pattern})
+        st.dataframe(df, use_container_width=True, height=600)
+    except Exception as e:
+        st.error(f"Search failed: {e}")
+
+
 with st.expander("💡 Example queries"):
     st.markdown("""
     - `SELECT * FROM eggnog_query LIMIT 5`

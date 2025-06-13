@@ -31,8 +31,7 @@ class KEGGOrtholog(Base):
     __tablename__ = 'kegg_ortholog'
 
     id = Column(Integer, primary_key=True)
-    query_id = Column(String, ForeignKey('eggnog_query.query_id'),
-                      nullable=False)
+    query_id = Column(String, ForeignKey('eggnog_query.query_id'), nullable=False)
     kegg_ko = Column(String, nullable=False)
 
     query = relationship("EggnogQuery", back_populates="kegg_orthologs")
@@ -41,8 +40,7 @@ class KEGGPathway(Base):
     __tablename__ = 'kegg_pathway'
 
     id = Column(Integer, primary_key=True)
-    query_id = Column(String, ForeignKey('eggnog_query.query_id'),
-                      nullable=False)
+    query_id = Column(String, ForeignKey('eggnog_query.query_id'), nullable=False)
     kegg_pathway = Column(String, nullable=False)
 
     query = relationship("EggnogQuery", back_populates="kegg_pathways")
