@@ -1,29 +1,24 @@
+# GitHub Actions workflow named CI
 name: CI
 
+# Tell the WF when to run
 on:
   push:
-    branches: [ "**" ]
+    branches: [ "**" ] # It runs on all branches
   pull_request:
-    branches: [ "**" ]
+    branches: [ "**" ] # It runs on all PRs
 
 jobs:
   test:
+    # Specify where to run the WF (docker container in the cloud)
     runs-on: ubuntu-latest
-
+    # What should the WF do 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4 # Prepare env for job, check out code in repo
+      - uses: actions/setup-python@v5 # Set up Python
         with:
           python-version: '3.10'
-
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-
+      - run: pip install -r requirements.txt # Install dependencies
       - name: Run tests
         run: |
           pytest
-
