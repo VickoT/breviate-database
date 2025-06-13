@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import pandas as pd
-from models import EggnogQuery, COGCategory, COGCategoryDescription, KEGGOrtholog, KEGGPathway, Base
+from scripts.models import EggnogQuery, COGCategory, COGCategoryDescription, KEGGOrtholog, KEGGPathway, Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
