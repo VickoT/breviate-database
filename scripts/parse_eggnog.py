@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 import pandas as pd
-from scripts.models import EggnogQuery, COGCategory, COGCategoryDescription, KEGGOrtholog, KEGGPathway, Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
+from scripts.models import (
+        EggnogQuery, COGCategory, COGCategoryDescription,
+        KEGGOrtholog, KEGGPathway
+        )
 
 class EggNOGAnnotationParser: 
 
@@ -28,8 +30,8 @@ class EggNOGAnnotationParser:
 
     def export_to_postgres(self):
         engine = create_engine('postgresql://eggnog:password@localhost:5432/eggnogdb')
-        Session = sessionmaker(bind=engine)
-        session = Session()
+        session_factory = sessionmaker(bind=engine)
+        session = session_factory()
 
         # Add an 'if reset:'
         session.query(COGCategory).delete()
@@ -68,7 +70,8 @@ class EggNOGAnnotationParser:
                 for pathway in row['kegg_pathway'].split(','):
                     pathway = pathway.strip()
                     if pathway and pathway != "-":
-                        kegg_pathway_entry = KEGGPathway(query_id=row['query_id'], kegg_pathway=pathway)
+                        kegg_pathway_entry = KEGGPathway(query_id=row['query_id'],
+                                                         kegg_pathway=pathway)
                         session.add(kegg_pathway_entry)
 
             # Create COGCategory objects for each category in the row
@@ -88,8 +91,8 @@ class EggNOGAnnotationParser:
     def create_cog_description_table(self):
         """Populate the cog_category_description table with all standard COG categories."""
         engine = create_engine('postgresql://eggnog:password@localhost:5432/eggnogdb')
-        Session = sessionmaker(bind=engine)
-        session = Session()
+        session_factory = sessionmaker(bind=engine)
+        session = session_factory()
 
         cog_category_descriptions = {
             'A': 'RNA processing and modification',

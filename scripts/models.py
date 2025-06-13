@@ -1,7 +1,7 @@
-from sqlalchemy import Column, Integer, Float, String, Text, ForeignKey 
-from sqlalchemy import DateTime, create_engine
-from sqlalchemy.orm import relationship, declarative_base, sessionmaker
 from datetime import datetime
+from sqlalchemy import Column, Integer, Float, String, Text, ForeignKey
+from sqlalchemy import DateTime, create_engine
+from sqlalchemy.orm import relationship, declarative_base
 
 # Create a base class for the ORM models
 Base = declarative_base()
@@ -24,7 +24,7 @@ class EggnogQuery(Base):
                                   cascade="all, delete-orphan")
     kegg_orthologs = relationship("KEGGOrtholog", back_populates="query",
                                   cascade="all, delete-orphan")
-    kegg_pathways = relationship("KEGGPathway", back_populates="query", 
+    kegg_pathways = relationship("KEGGPathway", back_populates="query",
                                   cascade="all, delete-orphan")
 
 class KEGGOrtholog(Base):
@@ -75,4 +75,3 @@ def init_db():
 
 if __name__ == "__main__":
     init_db()
-
