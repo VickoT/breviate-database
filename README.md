@@ -2,6 +2,7 @@
 
 ![CI](https://github.com/VickoT/breviate-database/actions/workflows/ci.yml/badge.svg?branch=main)
 ![Markdown Lint](https://github.com/VickoT/breviate-database/actions/workflows/markdownlint.yml/badge.svg?branch=main)
+![Pylint](https://github.com/VickoT/breviate-database/actions/workflows/pylint.yml/badge.svg?branch=main)
 
 A Dockerized PostgreSQL database for storing functional annotations of breviate proteomes.
 
